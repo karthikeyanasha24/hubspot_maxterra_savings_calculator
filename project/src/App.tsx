@@ -163,72 +163,57 @@ const SavingsCalculator = () => {
   };
 
   const handleFormSubmit = async () => {
-    if (!firstName || !lastName || !email) return;
+  if (!firstName || !lastName || !email) return;
 
-    setIsSubmitting(true);
-    try {
-      const reportData = {
-        "First Name": firstName,
-        "Last Name": lastName,
-        "Email": email,
-        "Phone": phone,
-        "Street Address": streetAddress,
-        "City": city,
-        "State": state,
-        "Zip Code": zipCode,
-        "Company": company,
-        "What are you looking to replace?": projectType === 'gypcrete' ? 'Wet Gypsum Underlayment' : 'Entire Subfloor System',
-        "Replace System": projectType === 'gypcrete' ? 'OSB + Wet Gypsum with MAXTERRA MgO Fire- And Water-Resistant Underlayment' : `Subfloor with MAXTERRA® MgO Non-Combustible Single Layer Structural Floor Panels`,
-        "Project Size (sq ft)": projectSize,
-        "Building Type": buildingType,
-        "Total Project Savings ($)": results.savings,
-        "Cost Savings per SF ($)": (results.currentCostPerSF - results.maxterraCostPerSF).toFixed(2),
-        "Current System Cost ($)": results.currentCost,
-        "Current System Cost per SF ($/sq ft)": results.currentCostPerSF.toFixed(2),
-        "MAXTERRA System Cost ($)": results.maxterraCost,
-        "MAXTERRA Cost per SF ($/sq ft)": results.maxterraCostPerSF.toFixed(2),
-        "Competitor": results.competitorName || 'N/A',
-      };
+  setIsSubmitting(true);
 
-      const hubspotData = {
-        firstName,
-        lastName,
-        email,
-        phone,
-        streetAddress,
-        city,
-        state,
-        zipCode,
-        company,
-        calculatorType: projectType === 'gypcrete' ? 'Gypsum Replacement' : 'Structural Floor Replacement',
-        squareFootage: projectSize,
-        buildingType: buildingType,
-        currentProduct: projectType === 'gypcrete' ? 'Wet Gypsum' : results.competitorName,
-        calculatedSavings: results.savings,
-        pageUri: window.location.href,
-        pageName: document.title,
-        hutk: getHubSpotCookie(),
-      };
+  try {
+    const hubspotData = {
+      firstName,
+      lastName,
+      email,
+      phone,
+      streetAddress,
+      city,
+      state,
+      zipCode,
+      company,
+      calculatorType: projectType === 'gypcrete'
+        ? 'Gypsum Replacement'
+        : 'Structural Floor Replacement',
+      squareFootage: projectSize,
+      buildingType,
+      currentProduct: projectType === 'gypcrete'
+        ? 'Wet Gypsum'
+        : results.competitorName,
+      calculatedSavings: results.savings,
+      pageUri: window.location.href,
+      pageName: document.title,
+      hutk: getHubSpotCookie(),
+    };
 
-      
+    const response = await fetch('/.netlify/functions/submit-hubspot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(hubspotData),
+    });
 
-      // 2. Submit to HubSpot
-      await fetch('/.netlify/functions/submit-hubspot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(hubspotData),
-      });
-
-      alert('Success! Your report has been sent and your sample request has been submitted.');
-      setShowFullReport(true);
-
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('There was an error submitting your request. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || 'HubSpot submission failed');
     }
-  };
+
+    // ✅ ONLY runs when HubSpot accepts the data
+    alert('Success! Your report has been sent and your sample request has been submitted.');
+    setShowFullReport(true);
+
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    alert('There was an error submitting your request. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   // STEP 1
   if (step === 1) {
