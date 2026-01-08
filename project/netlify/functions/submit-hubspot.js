@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 
-const HUBSPOT_PORTAL_ID = process.env.HUBSPOT_PORTAL_ID;
-const HUBSPOT_FORM_GUID = process.env.HUBSPOT_FORM_GUID;
+const HUBSPOT_PORTAL_ID = "22103193";
+const HUBSPOT_FORM_GUID = "0d05d36d-71ff-45ff-91b4-8188b1b578af";
 
 exports.handler = async (event, context) => {
   if (event.httpMethod === 'OPTIONS') {
