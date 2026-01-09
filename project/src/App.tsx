@@ -222,9 +222,7 @@ const SavingsCalculator = () => {
           <h2 className="text-2xl font-bold mb-3">
             Thank you for your sample request.
           </h2>
-          <p className="text-gray-600 mb-6">
-            Your report has been sent successfully.
-          </p>
+          
 
           <button
             onClick={() => {
