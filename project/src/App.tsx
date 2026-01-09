@@ -191,59 +191,59 @@ const SavingsCalculator = () => {
   };
 
   const handleFormSubmit = async () => {
-  if (!isContactFormValid()) {
-    alert('Please fill in all required fields.');
-    return;
-  }
-
-  setIsSubmitting(true);
-
-  try {
-    const hubspotData = {
-      firstName,
-      lastName,
-      email,
-      phone,
-      streetAddress,
-      city,
-      state,
-      zipCode,
-      company,
-      calculatorType: projectType === 'gypcrete'
-        ? 'Gypsum Replacement'
-        : 'Structural Floor Replacement',
-      squareFootage: projectSize,
-      buildingType,
-      currentProduct: projectType === 'gypcrete'
-        ? 'Wet Gypsum'
-        : results.competitorName,
-      calculatedSavings: results.savings,
-      pageUri: window.location.href,
-      pageName: document.title,
-      hutk: getHubSpotCookie(),
-    };
-
-    const response = await fetch('/.netlify/functions/submit-hubspot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(hubspotData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || 'HubSpot submission failed');
+    if (!isContactFormValid()) {
+      alert('Please fill in all required fields.');
+      return;
     }
 
-    // ✅ ONLY runs when HubSpot accepts the data
-    setShowThankYou(true);
+    setIsSubmitting(true);
 
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    alert('There was an error submitting your request. Please try again.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    try {
+      const hubspotData = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        streetAddress,
+        city,
+        state,
+        zipCode,
+        company,
+        calculatorType: projectType === 'gypcrete'
+          ? 'Gypsum Replacement'
+          : 'Structural Floor Replacement',
+        squareFootage: projectSize,
+        buildingType,
+        currentProduct: projectType === 'gypcrete'
+          ? 'Wet Gypsum'
+          : results.competitorName,
+        calculatedSavings: results.savings,
+        pageUri: window.location.href,
+        pageName: document.title,
+        hutk: getHubSpotCookie(),
+      };
+
+      const response = await fetch('/.netlify/functions/submit-hubspot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(hubspotData),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'HubSpot submission failed');
+      }
+
+      // ✅ ONLY runs when HubSpot accepts the data
+      setShowThankYou(true);
+
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting your request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (showThankYou) {
     return (
@@ -252,20 +252,25 @@ const SavingsCalculator = () => {
           <h2 className="text-2xl font-bold mb-3">
             Thank you for your sample request.
           </h2>
-          
+
 
           <button
             onClick={() => {
               if (window.self !== window.top) {
-                window.parent.postMessage('close-iframe', '*');
+                // If inside iframe, redirect parent window
+                window.parent.location.href =
+                  'https://nexgenbp.com/skip-the-gyp-calculator';
               } else {
-                window.close();
+                // Normal redirect
+                window.location.href =
+                  'https://nexgenbp.com/skip-the-gyp-calculator';
               }
             }}
             className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg"
           >
-            Close Window
+            Go Back
           </button>
+
         </div>
       </div>
     );
@@ -285,18 +290,16 @@ const SavingsCalculator = () => {
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <button
               onClick={() => handleProjectTypeSelect('gypcrete')}
-              className={`p-8 border-2 rounded-2xl transition-all duration-200 text-left hover:shadow-lg relative ${
-                projectType === 'gypcrete' ? 'border-selectedOrange bg-white shadow-lg' : 'border-unselectedGray bg-white'
-              }`}
+              className={`p-8 border-2 rounded-2xl transition-all duration-200 text-left hover:shadow-lg relative ${projectType === 'gypcrete' ? 'border-selectedOrange bg-white shadow-lg' : 'border-unselectedGray bg-white'
+                }`}
             >
               <div
-                className={`absolute left-0 top-0 bottom-0 w-4 rounded-l-2xl ${
-                  projectType === 'gypcrete'
+                className={`absolute left-0 top-0 bottom-0 w-4 rounded-l-2xl ${projectType === 'gypcrete'
                     ? 'bg-selectedOrange'
                     : projectType === 'subfloor'
-                    ? 'bg-unselectedGray'
-                    : 'bg-customBlue'
-                }`}
+                      ? 'bg-unselectedGray'
+                      : 'bg-customBlue'
+                  }`}
               />
               <h4 className="text-lg font-bold text-darkGray mb-4 leading-[39px] tracking-[-0.01em]">Wet Gypsum Underlayment</h4>
               <p className="font-medium text-sm leading-[20px] tracking-normal text-darkGray mb-3">
@@ -305,18 +308,16 @@ const SavingsCalculator = () => {
             </button>
             <button
               onClick={() => handleProjectTypeSelect('subfloor')}
-              className={`p-8 border-2 rounded-2xl transition-all duration-200 text-left hover:shadow-lg relative ${
-                projectType === 'subfloor' ? 'border-selectedOrange bg-white shadow-lg' : 'border-unselectedGray bg-white'
-              }`}
+              className={`p-8 border-2 rounded-2xl transition-all duration-200 text-left hover:shadow-lg relative ${projectType === 'subfloor' ? 'border-selectedOrange bg-white shadow-lg' : 'border-unselectedGray bg-white'
+                }`}
             >
               <div
-                className={`absolute left-0 top-0 bottom-0 w-4 rounded-l-2xl ${
-                  projectType === 'subfloor'
+                className={`absolute left-0 top-0 bottom-0 w-4 rounded-l-2xl ${projectType === 'subfloor'
                     ? 'bg-selectedOrange'
                     : projectType === 'gypcrete'
-                    ? 'bg-unselectedGray'
-                    : 'bg-customDarkBlue'
-                }`}
+                      ? 'bg-unselectedGray'
+                      : 'bg-customDarkBlue'
+                  }`}
               />
               <h3 className="text-lg font-bold text-darkGray mb-4 leading-[39px] tracking-[-0.01em]">Entire Subfloor System</h3>
               <p className="font-medium text-sm leading-[20px] tracking-normal text-darkGray mb-3">
@@ -415,11 +416,11 @@ const SavingsCalculator = () => {
               <button
                 onClick={handleCalculate}
                 disabled={
-          !projectSize ||
-          projectSize <= 0 ||
-          !buildingType ||
-          (projectType === 'subfloor' && !competitorType)
-        }
+                  !projectSize ||
+                  projectSize <= 0 ||
+                  !buildingType ||
+                  (projectType === 'subfloor' && !competitorType)
+                }
                 className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-12 py-4 rounded-lg text-xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Calculate My Savings
@@ -448,8 +449,8 @@ const SavingsCalculator = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center mb-4">
               <svg width="30" height="53" viewBox="0 0 30 53" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12">
-                <path d="M12.6664 50.776V45.16H17.6824V50.776H12.6664ZM12.6664 12.304V6.664H17.6824V12.304H12.6664ZM15.4264 46.72C13.0264 46.72 10.8824 46.288 8.99438 45.424C7.10638 44.56 5.55438 43.336 4.33838 41.752C3.13838 40.152 2.35438 38.264 1.98638 36.088L6.95438 35.296C7.43438 37.344 8.45838 38.976 10.0264 40.192C11.5944 41.392 13.4744 41.992 15.6664 41.992C17.8424 41.992 19.6104 41.472 20.9704 40.432C22.3464 39.392 23.0344 38.064 23.0344 36.448C23.0344 35.296 22.6824 34.36 21.9784 33.64C21.2904 32.92 20.1624 32.312 18.5944 31.816L10.4824 29.32C5.68238 27.832 3.28238 24.952 3.28238 20.68C3.28238 18.664 3.76238 16.912 4.72238 15.424C5.69838 13.936 7.06638 12.784 8.82638 11.968C10.5864 11.152 12.6424 10.744 14.9944 10.744C17.2504 10.776 19.2504 11.192 20.9944 11.992C22.7544 12.792 24.2104 13.944 25.3624 15.448C26.5304 16.952 27.3384 18.76 27.7864 20.872L22.6744 21.784C22.4504 20.552 21.9784 19.464 21.2584 18.52C20.5544 17.576 19.6584 16.84 18.5704 16.312C17.4984 15.784 16.2904 15.512 14.9464 15.496C13.6824 15.464 12.5464 15.664 11.5384 16.096C10.5464 16.512 9.75438 17.104 9.16238 17.872C8.58638 18.624 8.29838 19.48 8.29838 20.44C8.29838 21.496 8.70638 22.392 9.52238 23.128C10.3384 23.864 11.6264 24.496 13.3864 25.024L19.7464 26.872C22.6584 27.736 24.7624 28.896 26.0584 30.352C27.3544 31.808 28.0024 33.744 28.0024 36.16C28.0024 38.272 27.4744 40.12 26.4184 41.704C25.3784 43.272 23.9144 44.504 22.0264 45.4C20.1384 46.28 17.9384 46.72 15.4264 46.72Z" fill="#23C45F"/>
-                <rect x="12" y="6" width="6" height="45" fill="#23C45F"/>
+                <path d="M12.6664 50.776V45.16H17.6824V50.776H12.6664ZM12.6664 12.304V6.664H17.6824V12.304H12.6664ZM15.4264 46.72C13.0264 46.72 10.8824 46.288 8.99438 45.424C7.10638 44.56 5.55438 43.336 4.33838 41.752C3.13838 40.152 2.35438 38.264 1.98638 36.088L6.95438 35.296C7.43438 37.344 8.45838 38.976 10.0264 40.192C11.5944 41.392 13.4744 41.992 15.6664 41.992C17.8424 41.992 19.6104 41.472 20.9704 40.432C22.3464 39.392 23.0344 38.064 23.0344 36.448C23.0344 35.296 22.6824 34.36 21.9784 33.64C21.2904 32.92 20.1624 32.312 18.5944 31.816L10.4824 29.32C5.68238 27.832 3.28238 24.952 3.28238 20.68C3.28238 18.664 3.76238 16.912 4.72238 15.424C5.69838 13.936 7.06638 12.784 8.82638 11.968C10.5864 11.152 12.6424 10.744 14.9944 10.744C17.2504 10.776 19.2504 11.192 20.9944 11.992C22.7544 12.792 24.2104 13.944 25.3624 15.448C26.5304 16.952 27.3384 18.76 27.7864 20.872L22.6744 21.784C22.4504 20.552 21.9784 19.464 21.2584 18.52C20.5544 17.576 19.6584 16.84 18.5704 16.312C17.4984 15.784 16.2904 15.512 14.9464 15.496C13.6824 15.464 12.5464 15.664 11.5384 16.096C10.5464 16.512 9.75438 17.104 9.16238 17.872C8.58638 18.624 8.29838 19.48 8.29838 20.44C8.29838 21.496 8.70638 22.392 9.52238 23.128C10.3384 23.864 11.6264 24.496 13.3864 25.024L19.7464 26.872C22.6584 27.736 24.7624 28.896 26.0584 30.352C27.3544 31.808 28.0024 33.744 28.0024 36.16C28.0024 38.272 27.4744 40.12 26.4184 41.704C25.3784 43.272 23.9144 44.504 22.0264 45.4C20.1384 46.28 17.9384 46.72 15.4264 46.72Z" fill="#23C45F" />
+                <rect x="12" y="6" width="6" height="45" fill="#23C45F" />
               </svg>
             </div>
             <h2 className="font-manrope font-semibold text-[36px] leading-[56px] tracking-[-0.03em] text-gray-900 mb-2">
@@ -541,7 +542,7 @@ const SavingsCalculator = () => {
                 placeholder="Enter your email"
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-[7px] focus:border-orange-500 focus:outline-none placeholder-placeholderGray font-manrope font-normal text-sm leading-[20px] tracking-normal mb-4"
               />
-                            <div className="grid md:grid-cols-2 gap-3 mb-4">
+              <div className="grid md:grid-cols-2 gap-3 mb-4">
                 <input
                   type="tel"
                   required
