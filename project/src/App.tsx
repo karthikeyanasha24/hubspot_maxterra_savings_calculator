@@ -227,15 +227,20 @@ const SavingsCalculator = () => {
           <button
             onClick={() => {
               if (window.self !== window.top) {
-                window.parent.postMessage('close-iframe', '*');
+                // If inside iframe, redirect parent window
+                window.parent.location.href =
+                  'https://nexgenbp.com/skip-the-gyp-calculator';
               } else {
-                window.close();
+                // Normal redirect
+                window.location.href =
+                  'https://nexgenbp.com/skip-the-gyp-calculator';
               }
             }}
             className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg"
           >
-            Close Window
+            Go Back
           </button>
+
         </div>
       </div>
     );
