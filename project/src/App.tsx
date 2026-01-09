@@ -23,7 +23,7 @@ const SavingsCalculator = () => {
   const [step, setStep] = useState(1);
   const [projectType, setProjectType] = useState('');
   const [buildingType, setBuildingType] = useState('');
-  const [projectSize, setProjectSize] = useState(10000);
+  const [projectSize, setProjectSize] = useState<number | ''>('');
   const [competitorType, setCompetitorType] = useState('');
   const [results, setResults] = useState<any>(null);
   const [email, setEmail] = useState('');
@@ -113,9 +113,13 @@ const SavingsCalculator = () => {
   };
 
   const calculateSavings = () => {
+    const size = Number(projectSize);
+    if (isNaN(size) || size <= 0) {
+      return null;
+    }
     if (projectType === 'gypcrete') {
-      const currentCost = gypcreteData.current.total * projectSize;
-      const maxterraCost = gypcreteData.maxterra.total * projectSize;
+      const currentCost = gypcreteData.current.total * size;
+      const maxterraCost = gypcreteData.maxterra.total * size;
       const savings = currentCost - maxterraCost;
       const percentSavings = (savings / currentCost) * 100;
       return {
@@ -135,8 +139,8 @@ const SavingsCalculator = () => {
       };
     } else {
       const competitor = competitorData[competitorType];
-      const currentCost = competitor.competitorCost * projectSize;
-      const maxterraCost = competitor.maxterraCost * projectSize;
+      const currentCost = competitor.competitorCost * size;
+      const maxterraCost = competitor.maxterraCost * size;
       const savings = currentCost - maxterraCost;
       const percentSavings = (savings / currentCost) * 100;
       return {
@@ -154,6 +158,16 @@ const SavingsCalculator = () => {
   };
 
   const handleCalculate = () => {
+    if (!projectSize || projectSize <= 0 || !buildingType) {
+      alert('Please enter Project Size and select Building Type');
+      return;
+    }
+
+    if (projectType === 'subfloor' && !competitorType) {
+      alert('Please select Current Subfloor Product');
+      return;
+    }
+
     const r = calculateSavings();
     setResults(r);
     setStep(3);
@@ -163,8 +177,24 @@ const SavingsCalculator = () => {
     if (email) setShowFullReport(true);
   };
 
+  const isContactFormValid = () => {
+    return (
+      firstName.trim() &&
+      lastName.trim() &&
+      email.trim() &&
+      phone.trim() &&
+      streetAddress.trim() &&
+      city.trim() &&
+      state.trim() &&
+      zipCode.trim()
+    );
+  };
+
   const handleFormSubmit = async () => {
-  if (!firstName || !lastName || !email) return;
+  if (!isContactFormValid()) {
+    alert('Please fill in all required fields.');
+    return;
+  }
 
   setIsSubmitting(true);
 
@@ -227,20 +257,15 @@ const SavingsCalculator = () => {
           <button
             onClick={() => {
               if (window.self !== window.top) {
-                // If inside iframe, redirect parent window
-                window.parent.location.href =
-                  'https://nexgenbp.com/skip-the-gyp-calculator';
+                window.parent.postMessage('close-iframe', '*');
               } else {
-                // Normal redirect
-                window.location.href =
-                  'https://nexgenbp.com/skip-the-gyp-calculator';
+                window.close();
               }
             }}
             className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg"
           >
-            Go Back
+            Close Window
           </button>
-
         </div>
       </div>
     );
@@ -341,8 +366,11 @@ const SavingsCalculator = () => {
               <label className="block text-base font-semibold text-gray-700 mb-2 leading-[39px] tracking-[-0.01em]">Project Size (sq ft)</label>
               <input
                 type="number"
+                required
                 value={projectSize}
-                onChange={(e) => setProjectSize(Number(e.target.value))}
+                onChange={(e) =>
+                  setProjectSize(e.target.value ? parseInt(e.target.value, 10) : '')
+                }
                 className="w-full px-4 py-3 border border-borderLightGray rounded-[7px] focus:border-orange-500 focus:outline-none text-lg leading-[39px] tracking-[-0.01em] text-center"
                 min="100"
                 step="100"
@@ -386,7 +414,12 @@ const SavingsCalculator = () => {
             <div className="text-center pt-4">
               <button
                 onClick={handleCalculate}
-                disabled={projectType === 'subfloor' && (!competitorType || !buildingType)}
+                disabled={
+          !projectSize ||
+          projectSize <= 0 ||
+          !buildingType ||
+          (projectType === 'subfloor' && !competitorType)
+        }
                 className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-12 py-4 rounded-lg text-xl font-bold hover:shadow-2xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Calculate My Savings
@@ -485,6 +518,7 @@ const SavingsCalculator = () => {
               <div className="grid md:grid-cols-2 gap-3 mb-4">
                 <input
                   type="text"
+                  required
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="Enter your first name"
@@ -492,6 +526,7 @@ const SavingsCalculator = () => {
                 />
                 <input
                   type="text"
+                  required
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Enter your last name"
@@ -500,6 +535,7 @@ const SavingsCalculator = () => {
               </div>
               <input
                 type="email"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
@@ -508,6 +544,7 @@ const SavingsCalculator = () => {
                             <div className="grid md:grid-cols-2 gap-3 mb-4">
                 <input
                   type="tel"
+                  required
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Enter your phone number"
@@ -523,6 +560,7 @@ const SavingsCalculator = () => {
               </div>
               <input
                 type="text"
+                required
                 value={streetAddress}
                 onChange={(e) => setStreetAddress(e.target.value)}
                 placeholder="Street address"
@@ -531,6 +569,7 @@ const SavingsCalculator = () => {
               <div className="grid md:grid-cols-3 gap-3 mb-4">
                 <input
                   type="text"
+                  required
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="City"
@@ -538,6 +577,7 @@ const SavingsCalculator = () => {
                 />
                 <input
                   type="text"
+                  required
                   value={state}
                   onChange={(e) => setState(e.target.value)}
                   placeholder="State"
@@ -545,6 +585,7 @@ const SavingsCalculator = () => {
                 />
                 <input
                   type="text"
+                  required
                   value={zipCode}
                   onChange={(e) => setZipCode(e.target.value)}
                   placeholder="Zip code"
@@ -553,7 +594,7 @@ const SavingsCalculator = () => {
               </div>
               <button
                 onClick={handleFormSubmit}
-                disabled={!firstName || !lastName || !email || isSubmitting}
+                disabled={!isContactFormValid() || isSubmitting}
                 className="bg-gradient-to-r from-gradientOrangeStart to-gradientOrangeEnd text-white px-12 py-3 rounded-[7px] font-semibold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Submitting...' : 'Submit'}
