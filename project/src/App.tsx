@@ -30,6 +30,7 @@ const SavingsCalculator = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [showFullReport, setShowFullReport] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phone, setPhone] = useState('');
   const [streetAddress, setStreetAddress] = useState('');
@@ -204,8 +205,7 @@ const SavingsCalculator = () => {
     }
 
     // ✅ ONLY runs when HubSpot accepts the data
-    alert('Success! Your report has been sent and your sample request has been submitted.');
-    setShowFullReport(true);
+    setShowThankYou(true);
 
   } catch (error) {
     console.error('Error submitting form:', error);
@@ -214,6 +214,34 @@ const SavingsCalculator = () => {
     setIsSubmitting(false);
   }
 };
+
+  if (showThankYou) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+        <div className="bg-white rounded-2xl shadow-xl p-10 max-w-md w-full text-center">
+          <h2 className="text-2xl font-bold mb-3">
+            Thank you for your sample request.
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Your report has been sent successfully.
+          </p>
+
+          <button
+            onClick={() => {
+              if (window.self !== window.top) {
+                window.parent.postMessage('close-iframe', '*');
+              } else {
+                window.close();
+              }
+            }}
+            className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg"
+          >
+            Close Window
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // STEP 1
   if (step === 1) {
