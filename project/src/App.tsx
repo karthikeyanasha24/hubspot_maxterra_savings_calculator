@@ -213,9 +213,12 @@ const SavingsCalculator = () => {
           ? 'Gypsum Replacement'
           : 'Structural Floor Replacement',
         squareFootage: projectSize,
-        buildingType,
+        buildingType: buildingType,
         currentProduct: projectType === 'gypcrete'
-          ? 'Wet Gypsum'
+          ? 'Wet-Laid Gypsum'
+          : results.competitorName === 'Structo-Crete' ? 'STRUCTO-CRETE'
+          : results.competitorName === 'Exacor' ? 'EXACOR'
+          : results.competitorName === 'Megaboard' ? 'MEGABOARD'
           : results.competitorName,
         calculatedSavings: results.savings,
         pageUri: window.location.href,
@@ -295,10 +298,10 @@ const SavingsCalculator = () => {
             >
               <div
                 className={`absolute left-0 top-0 bottom-0 w-4 rounded-l-2xl ${projectType === 'gypcrete'
-                    ? 'bg-selectedOrange'
-                    : projectType === 'subfloor'
-                      ? 'bg-unselectedGray'
-                      : 'bg-customBlue'
+                  ? 'bg-selectedOrange'
+                  : projectType === 'subfloor'
+                    ? 'bg-unselectedGray'
+                    : 'bg-customBlue'
                   }`}
               />
               <h4 className="text-lg font-bold text-darkGray mb-4 leading-[39px] tracking-[-0.01em]">Wet Gypsum Underlayment</h4>
@@ -313,10 +316,10 @@ const SavingsCalculator = () => {
             >
               <div
                 className={`absolute left-0 top-0 bottom-0 w-4 rounded-l-2xl ${projectType === 'subfloor'
-                    ? 'bg-selectedOrange'
-                    : projectType === 'gypcrete'
-                      ? 'bg-unselectedGray'
-                      : 'bg-customDarkBlue'
+                  ? 'bg-selectedOrange'
+                  : projectType === 'gypcrete'
+                    ? 'bg-unselectedGray'
+                    : 'bg-customDarkBlue'
                   }`}
               />
               <h3 className="text-lg font-bold text-darkGray mb-4 leading-[39px] tracking-[-0.01em]">Entire Subfloor System</h3>
@@ -385,14 +388,14 @@ const SavingsCalculator = () => {
                 className="w-full px-4 py-3 border border-borderLightGray rounded-[7px] focus:border-orange-500 focus:outline-none text-lg leading-[39px] tracking-[-0.01em] text-center"
               >
                 <option value="">Select building type...</option>
-                <option value="multifamily">Multi-family Residential</option>
-                <option value="hotel">Hotel/Hospitality</option>
-                <option value="commercial">Commercial Office</option>
-                <option value="retail">Retail/Mixed-use</option>
-                <option value="singlefamily">Single-family Residential</option>
-                <option value="datacenter">Data center</option>
-                <option value="healthcare">Healthcare</option>
-                <option value="other">Other</option>
+                <option value="Multi-Family Residential">Multi-Family Residential</option>
+                <option value="Hotel/Hospitality">Hotel/Hospitality</option>
+                <option value="Commerical">Commerical</option>
+                <option value="Industrial">Industrial</option>
+                <option value="Single-Family Residential">Single-Family Residential</option>
+                <option value="Data Center">Data Center</option>
+                <option value="Health Care">Health Care</option>
+                <option value="Education">Education</option>
               </select>
             </div>
             {projectType === 'subfloor' && (
@@ -404,11 +407,11 @@ const SavingsCalculator = () => {
                   className="w-full px-4 py-3 border border-borderLightGray rounded-[7px] focus:border-orange-500 focus:outline-none text-lg leading-[39px] tracking-[-0.01em] text-center"
                 >
                   <option value="">Select current product...</option>
-                  <option value="structocrete">STRUCTO-CRETE</option>
-                  <option value="exacor">EXACOR</option>
-                  <option value="megaboard">MEGABOARD</option>
-                  <option value="dragonboard">DragonBoard</option>
-                  <option value="nocom">NOCOM</option>
+                  <option value="STRUCTO-CRETE">STRUCTO-CRETE</option>
+                  <option value="EXACOR">EXACOR</option>
+                  <option value="MEGABOARD">MEGABOARD</option>
+                  <option value="DragonBoard">DragonBoard</option>
+                  <option value="NOCOM">NOCOM</option>
                 </select>
               </div>
             )}
@@ -457,56 +460,72 @@ const SavingsCalculator = () => {
               Your Potential Savings
             </h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-gradient-to-r from-gradientGreenStart to-gradientGreenEnd rounded-xl p-6 text-white">
-              <div className="flex items-center mb-2">
-                <img src="/image.png" alt="Dollar sign icon" className="w-10 h-14 mr-2" />
-                <div className="text-4xl font-bold">{results.savings.toLocaleString()}</div>
+          <div className="grid md:grid-cols-2 gap-4 mb-8 px-[25px]">
+            <div className="min-h-[180px] rounded-xl p-6 flex flex-col"
+              style={{ background: 'linear-gradient(100.32deg, #22C35F 1.27%, #049769 98.73%)' }}>
+              <h3 className="font-manrope font-bold text-[18px] leading-[24px] tracking-[-0.01em] text-white mb-2">
+                Total Project Savings
+              </h3>
+              <div className="flex items-baseline mb-3">
+                <span className="font-manrope font-bold text-[32px] leading-9 text-white">$</span>
+                <span className="font-manrope font-bold text-[32px] leading-9 text-white">
+                  {results.savings.toLocaleString()}
+                </span>
               </div>
-              <h3 className="text-lg font-bold mb-2">Total Project Savings</h3>
-              <p className="font-medium text-sm">
+              <p className="text-white font-manrope font-medium text-[14px] leading-[20px] mt-2">
                 That's {results.percentSavings}% less than {results.competitorName || 'gypcrete'}!
               </p>
             </div>
-            <div className="bg-gradient-to-r from-gradientBlueStart to-gradientBlueEnd rounded-xl p-6 text-white">
-              <div className="flex items-center mb-2">
-                <img src="/trend.png" alt="Upward trend arrow" className="w-12 h-9 mr-2" />
-                <div className="text-4xl font-bold">{(results.currentCostPerSF - results.maxterraCostPerSF).toFixed(2)}</div>
+
+            <div className="min-h-[180px] rounded-xl p-6 flex flex-col"
+              style={{ background: 'linear-gradient(103.15deg, #1AA9E2 3.09%, #0F6D92 121.14%)' }}>
+              <h3 className="font-manrope font-bold text-[18px] leading-[24px] tracking-[-0.01em] text-white mb-2">
+                Cost Savings per SF
+              </h3>
+              <div className="flex items-baseline mb-3">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2" style={{ marginBottom: '4px' }}>
+                  <path d="M16 6L18.29 8.29L13.41 13.17L9.41 9.17L2 16.59L3.41 18L9.41 12L13.41 16L19.71 9.71L22 12V6H16Z" fill="white"/>
+                </svg>
+                <span className="font-manrope font-bold text-[32px] leading-9 text-white">
+                  {(results.currentCostPerSF - results.maxterraCostPerSF).toFixed(2)}
+                </span>
               </div>
-              <h3 className="text-lg font-bold mb-2">Cost Savings per SF</h3>
-              <p className="font-medium text-sm">
+              <p className="text-white font-manrope font-medium text-[14px] leading-[20px] mt-2">
                 ${results.maxterraCostPerSF.toFixed(2)} vs ${results.currentCostPerSF.toFixed(2)}
               </p>
             </div>
           </div>
-          
-          <div className="bg-white rounded-xl border border-gray-200 p-8 mb-8">
-            <div className="text-center mb-6">
-              <h2 className="font-manrope font-semibold text-2xl leading-8 tracking-[-0.01em] text-[#212121]">Cost Breakdown</h2>
-            </div>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-costBreakdownCurrentBg rounded-xl border border-gray-200 p-8">
-                <h4 className="text-base font-medium text-gray-600 mb-4">
-                  {results.type === 'gypcrete' ? 'Current System (OSB + Gypcrete)' : `Current System (${results.competitorName})`}
-                </h4>
-                <div className="font-manrope font-extrabold text-[32px] leading-9 tracking-[-0.01em] text-[#212121] mb-2">${results.currentCost.toLocaleString()}</div>
-                <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-costBreakdownGray opacity-70">${results.currentCostPerSF.toFixed(2)}/sq ft</div>
-              </div>
-              <div className="bg-maxterraCardBackground rounded-xl p-8 border border-gray-100">
-                <h4 className="font-manrope font-bold text-base leading-5 tracking-[-0.01em] text-[#212121] mb-4">
-                  {results.type === 'gypcrete' ? 'MAXTERRA System (OSB + Underlayment)' : 'MAXTERRA Subfloor'}
-                </h4>
-                <div className="font-manrope font-extrabold text-[32px] leading-9 tracking-[-0.01em] text-green-600 mb-2">${results.maxterraCost.toLocaleString()}</div>
-                <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-costBreakdownGray opacity-70">${results.maxterraCostPerSF.toFixed(2)}/sq ft</div>
+
+          <div className="text-center mb-6">
+            <h2 className="font-manrope font-semibold text-2xl leading-8 tracking-[-0.01em] text-[#212121]">Cost Breakdown</h2>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4 mb-8 px-[25px]">
+            <div className="bg-costBreakdownCurrentBg rounded-xl border border-gray-200 p-6 flex flex-col h-full">
+              <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] mb-4 min-h-[40px] flex items-center">
+                {results.type === 'gypcrete' ? 'Current System (OSB + Gypcrete)' : `Current System (${results.competitorName})`}
+              </h4>
+              <div className="mt-auto">
+                <div className="font-manrope font-extrabold text-[28px] leading-[18px] tracking-[-0.01em] text-[#212121]">${results.currentCost.toLocaleString()}</div>
+                <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#25647D] mt-1">${results.currentCostPerSF.toFixed(2)}/sq ft</div>
               </div>
             </div>
-            <div className="mt-4 text-center">
-              <p className="font-manrope text-sm text-gray-500 italic">
-                Cost estimates based on average national pricing; material and labor costs vary by region. 
-                Contact us to discuss pricing for your specific market.
-              </p>
+            <div className="bg-[#22C25533] rounded-lg p-6 flex flex-col h-full">
+              <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] mb-4 min-h-[40px] flex items-center">
+                {results.type === 'gypcrete' ? 'MAXTERRA System (OSB + Underlayment)' : 'MAXTERRA Subfloor'}
+              </h4>
+              <div className="mt-auto">
+                <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-green-600">${results.maxterraCost.toLocaleString()}</div>
+                <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#22C255] mt-1">${results.maxterraCostPerSF.toFixed(2)}/sq ft</div>
+              </div>
             </div>
           </div>
+          <div className="mt-4 text-center">
+            <p className="font-manrope text-sm text-gray-500 italic">
+              Cost estimates based on average national pricing; material and labor costs vary by region.
+              Contact us to discuss pricing for your specific market.
+            </p>
+          </div>
+
           {results.type === 'subfloor' && (
             <div className="bg-gray-50 rounded-xl p-6 mb-6">
               <h4 className="font-semibold text-gray-700 mb-3">Calculation Details</h4>
