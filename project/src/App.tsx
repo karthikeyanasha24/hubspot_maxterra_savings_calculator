@@ -450,11 +450,8 @@ const SavingsCalculator = () => {
             </button>
           </div>
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center mb-4">
-              <svg width="30" height="53" viewBox="0 0 30 53" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-12 h-12">
-                <path d="M12.6664 50.776V45.16H17.6824V50.776H12.6664ZM12.6664 12.304V6.664H17.6824V12.304H12.6664ZM15.4264 46.72C13.0264 46.72 10.8824 46.288 8.99438 45.424C7.10638 44.56 5.55438 43.336 4.33838 41.752C3.13838 40.152 2.35438 38.264 1.98638 36.088L6.95438 35.296C7.43438 37.344 8.45838 38.976 10.0264 40.192C11.5944 41.392 13.4744 41.992 15.6664 41.992C17.8424 41.992 19.6104 41.472 20.9704 40.432C22.3464 39.392 23.0344 38.064 23.0344 36.448C23.0344 35.296 22.6824 34.36 21.9784 33.64C21.2904 32.92 20.1624 32.312 18.5944 31.816L10.4824 29.32C5.68238 27.832 3.28238 24.952 3.28238 20.68C3.28238 18.664 3.76238 16.912 4.72238 15.424C5.69838 13.936 7.06638 12.784 8.82638 11.968C10.5864 11.152 12.6424 10.744 14.9944 10.744C17.2504 10.776 19.2504 11.192 20.9944 11.992C22.7544 12.792 24.2104 13.944 25.3624 15.448C26.5304 16.952 27.3384 18.76 27.7864 20.872L22.6744 21.784C22.4504 20.552 21.9784 19.464 21.2584 18.52C20.5544 17.576 19.6584 16.84 18.5704 16.312C17.4984 15.784 16.2904 15.512 14.9464 15.496C13.6824 15.464 12.5464 15.664 11.5384 16.096C10.5464 16.512 9.75438 17.104 9.16238 17.872C8.58638 18.624 8.29838 19.48 8.29838 20.44C8.29838 21.496 8.70638 22.392 9.52238 23.128C10.3384 23.864 11.6264 24.496 13.3864 25.024L19.7464 26.872C22.6584 27.736 24.7624 28.896 26.0584 30.352C27.3544 31.808 28.0024 33.744 28.0024 36.16C28.0024 38.272 27.4744 40.12 26.4184 41.704C25.3784 43.272 23.9144 44.504 22.0264 45.4C20.1384 46.28 17.9384 46.72 15.4264 46.72Z" fill="#23C45F" />
-                <rect x="12" y="6" width="6" height="45" fill="#23C45F" />
-              </svg>
+            <div className="inline-flex items-center justify-center mb-4 w-12 h-12">
+              <span className="font-manrope font-bold text-4xl text-[#23C45F]">$</span>
             </div>
             <h2 className="font-manrope font-semibold text-[36px] leading-[56px] tracking-[-0.03em] text-gray-900 mb-2">
               Your Potential Savings
@@ -463,34 +460,34 @@ const SavingsCalculator = () => {
           <div className="grid md:grid-cols-2 gap-4 mb-8 px-[25px]">
             <div className="min-h-[180px] rounded-xl p-6 flex flex-col"
               style={{ background: 'linear-gradient(100.32deg, #22C35F 1.27%, #049769 98.73%)' }}>
-              <h3 className="font-manrope font-bold text-[18px] leading-[24px] tracking-[-0.01em] text-white mb-2">
+              <h3 className="font-manrope font-bold text-[18px] leading-[24px] tracking-[-0.01em] text-white mb-3">
                 Total Project Savings
               </h3>
-              <div className="flex items-baseline mb-3">
+              <div className="flex items-baseline mb-4">
                 <span className="font-manrope font-bold text-[32px] leading-9 text-white">$</span>
                 <span className="font-manrope font-bold text-[32px] leading-9 text-white">
                   {results.savings.toLocaleString()}
                 </span>
               </div>
-              <p className="text-white font-manrope font-medium text-[14px] leading-[20px] mt-2">
+              <p className="text-white font-manrope font-medium text-[14px] leading-[20px]">
                 That's {results.percentSavings}% less than {results.competitorName || 'gypcrete'}!
               </p>
             </div>
 
             <div className="min-h-[180px] rounded-xl p-6 flex flex-col"
               style={{ background: 'linear-gradient(103.15deg, #1AA9E2 3.09%, #0F6D92 121.14%)' }}>
-              <h3 className="font-manrope font-bold text-[18px] leading-[24px] tracking-[-0.01em] text-white mb-2">
+              <h3 className="font-manrope font-bold text-[18px] leading-[24px] tracking-[-0.01em] text-white mb-3">
                 Cost Savings per SF
               </h3>
-              <div className="flex items-baseline mb-3">
+              <div className="flex items-baseline mb-4">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2" style={{ marginBottom: '4px' }}>
                   <path d="M16 6L18.29 8.29L13.41 13.17L9.41 9.17L2 16.59L3.41 18L9.41 12L13.41 16L19.71 9.71L22 12V6H16Z" fill="white"/>
                 </svg>
                 <span className="font-manrope font-bold text-[32px] leading-9 text-white">
-                  {(results.currentCostPerSF - results.maxterraCostPerSF).toFixed(2)}
+                  ${(results.currentCostPerSF - results.maxterraCostPerSF).toFixed(2)}
                 </span>
               </div>
-              <p className="text-white font-manrope font-medium text-[14px] leading-[20px] mt-2">
+              <p className="text-white font-manrope font-medium text-[14px] leading-[20px]">
                 ${results.maxterraCostPerSF.toFixed(2)} vs ${results.currentCostPerSF.toFixed(2)}
               </p>
             </div>
@@ -501,19 +498,19 @@ const SavingsCalculator = () => {
           </div>
           <div className="grid md:grid-cols-2 gap-4 mb-8 px-[25px]">
   <div className="bg-costBreakdownCurrentBg rounded-xl border border-gray-200 p-6 flex flex-col h-full">
-    <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] mb-4 min-h-[40px] flex items-center">
+    <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] -mb-1 min-h-[40px] flex items-center">
       {results.type === 'gypcrete' ? 'Current System (OSB + Gypcrete)' : `Current System (${results.competitorName})`}
     </h4>
-    <div className="mt-auto">
+    <div className="">
       <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-[#212121]">${results.currentCost.toLocaleString()}</div>
       <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#25647D] mt-1">${results.currentCostPerSF.toFixed(2)}/sq ft</div>
     </div>
   </div>
   <div className="bg-[#22C25533] rounded-lg p-6 flex flex-col h-full">
-    <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] mb-4 min-h-[40px] flex items-center">
+    <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] -mb-1 min-h-[40px] flex items-center">
       {results.type === 'gypcrete' ? 'MAXTERRA System (OSB + Underlayment)' : 'MAXTERRA Subfloor'}
     </h4>
-    <div className="mt-auto">
+    <div className="">
       <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-green-600">${results.maxterraCost.toLocaleString()}</div>
       <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#22C255] mt-1">${results.maxterraCostPerSF.toFixed(2)}/sq ft</div>
     </div>
