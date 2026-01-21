@@ -500,25 +500,25 @@ const SavingsCalculator = () => {
             <h2 className="font-manrope font-semibold text-2xl leading-8 tracking-[-0.01em] text-[#212121]">Cost Breakdown</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-4 mb-8 px-[25px]">
-            <div className="bg-costBreakdownCurrentBg rounded-xl border border-gray-200 p-6 flex flex-col h-full">
-              <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] mb-4 min-h-[40px] flex items-center">
-                {results.type === 'gypcrete' ? 'Current System (OSB + Gypcrete)' : `Current System (${results.competitorName})`}
-              </h4>
-              <div className="mt-auto">
-                <div className="font-manrope font-extrabold text-[28px] leading-[18px] tracking-[-0.01em] text-[#212121]">${results.currentCost.toLocaleString()}</div>
-                <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#25647D] mt-1">${results.currentCostPerSF.toFixed(2)}/sq ft</div>
-              </div>
-            </div>
-            <div className="bg-[#22C25533] rounded-lg p-6 flex flex-col h-full">
-              <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] mb-4 min-h-[40px] flex items-center">
-                {results.type === 'gypcrete' ? 'MAXTERRA System (OSB + Underlayment)' : 'MAXTERRA Subfloor'}
-              </h4>
-              <div className="mt-auto">
-                <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-green-600">${results.maxterraCost.toLocaleString()}</div>
-                <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#22C255] mt-1">${results.maxterraCostPerSF.toFixed(2)}/sq ft</div>
-              </div>
-            </div>
-          </div>
+  <div className="bg-costBreakdownCurrentBg rounded-xl border border-gray-200 p-6 flex flex-col h-full">
+    <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] mb-4 min-h-[40px] flex items-center">
+      {results.type === 'gypcrete' ? 'Current System (OSB + Gypcrete)' : `Current System (${results.competitorName})`}
+    </h4>
+    <div className="mt-auto">
+      <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-[#212121]">${results.currentCost.toLocaleString()}</div>
+      <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#25647D] mt-1">${results.currentCostPerSF.toFixed(2)}/sq ft</div>
+    </div>
+  </div>
+  <div className="bg-[#22C25533] rounded-lg p-6 flex flex-col h-full">
+    <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] mb-4 min-h-[40px] flex items-center">
+      {results.type === 'gypcrete' ? 'MAXTERRA System (OSB + Underlayment)' : 'MAXTERRA Subfloor'}
+    </h4>
+    <div className="mt-auto">
+      <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-green-600">${results.maxterraCost.toLocaleString()}</div>
+      <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#22C255] mt-1">${results.maxterraCostPerSF.toFixed(2)}/sq ft</div>
+    </div>
+  </div>
+</div>
           <div className="mt-4 text-center">
             <p className="font-manrope text-sm text-gray-500 italic">
               Cost estimates based on average national pricing; material and labor costs vary by region.
