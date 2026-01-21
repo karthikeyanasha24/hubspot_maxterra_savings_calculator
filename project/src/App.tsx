@@ -138,7 +138,15 @@ const SavingsCalculator = () => {
         ],
       };
     } else {
-      const competitor = competitorData[competitorType];
+      // Convert competitorType to lowercase and handle the hyphen in STRUCTO-CRETE
+      const competitorKey = competitorType.toLowerCase().replace(/-/g, '');
+      const competitor = competitorData[competitorKey];
+      
+      if (!competitor) {
+        console.error('Competitor not found:', competitorType, competitorKey);
+        return null;
+      }
+      
       const currentCost = competitor.competitorCost * size;
       const maxterraCost = competitor.maxterraCost * size;
       const savings = currentCost - maxterraCost;
@@ -153,6 +161,8 @@ const SavingsCalculator = () => {
         currentCostPerSF: competitor.competitorCost,
         maxterraCostPerSF: competitor.maxterraCost,
         additionalBenefits: competitor.additionalBenefits,
+        spacingNote: competitor.spacingNote,
+        constructionNote: competitor.constructionNote,
       };
     }
   };
