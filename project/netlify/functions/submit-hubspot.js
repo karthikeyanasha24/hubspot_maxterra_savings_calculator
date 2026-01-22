@@ -26,22 +26,30 @@ exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body);
 
+    // Log the incoming data for debugging
+    console.log('Submitting to HubSpot:', {
+      product: data.currentProduct,
+      productType: typeof data.currentProduct,
+      data: data
+    });
+
+    // Filter out empty fields and ensure string values
     const fields = [
-      { name: 'firstname', value: data.firstName || '' },
-      { name: 'lastname', value: data.lastName || '' },
-      { name: 'email', value: data.email || '' },
-      { name: 'phone', value: data.phone || '' },
-      { name: 'address', value: data.streetAddress || '' },
-      { name: 'city', value: data.city || '' },
-      { name: 'state', value: data.state || '' },
-      { name: 'zip', value: data.zipCode || '' },
-      { name: 'company', value: data.company || '' },
-      { name: 'calculator_type', value: data.calculatorType || '' },
-      { name: 'calculator_square_footage', value: data.squareFootage || '' },
-      { name: 'calculator_building_type', value: data.buildingType || '' },
-      { name: 'calculator_current_product', value: data.currentProduct || '' },
-      { name: 'calculator_savings', value: data.calculatedSavings || '' },
-    ];
+      { name: 'firstname', value: data.firstName },
+      { name: 'lastname', value: data.lastName },
+      { name: 'email', value: data.email },
+      { name: 'phone', value: data.phone },
+      { name: 'address', value: data.streetAddress },
+      { name: 'city', value: data.city },
+      { name: 'state', value: data.state },
+      { name: 'zip', value: data.zipCode },
+      { name: 'company', value: data.company },
+      { name: 'calculator_type', value: data.calculatorType },
+      { name: 'calculator_square_footage', value: data.squareFootage ? String(data.squareFootage) : '' },
+      { name: 'calculator_building_type', value: data.buildingType },
+      { name: 'calculator_current_product', value: data.currentProduct ? String(data.currentProduct) : '' },
+      { name: 'calculator_savings', value: data.calculatedSavings ? String(data.calculatedSavings) : '' },
+    ].filter(field => field.value !== undefined && field.value !== '' && field.value !== null);
 
     const payload = {
       fields: fields,
