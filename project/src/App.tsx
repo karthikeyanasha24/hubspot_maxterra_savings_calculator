@@ -20,6 +20,8 @@ const getHubSpotCookie = () => {
 };
 
 // Mapping of internal competitor keys to HubSpot's expected values
+// Mapping of internal competitor keys to HubSpot's expected values
+// These MUST match the "INTERNAL NAME" column in HubSpot exactly (case-sensitive)
 const HUBSPOT_PRODUCT_MAP: Record<string, string> = {
   structocrete: 'Structo-Crete',
   exacor: 'Exacor',
@@ -33,7 +35,7 @@ const SavingsCalculator = () => {
   const [projectType, setProjectType] = useState('');
   const [buildingType, setBuildingType] = useState('');
   const [projectSize, setProjectSize] = useState<number | ''>('');
-  const [competitorType, setCompetitorType] = useState('structocrete'); // Default to first option
+  const [competitorType, setCompetitorType] = useState<CompetitorType>('structocrete'); // Default to first option
   const [results, setResults] = useState<any>(null);
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -114,7 +116,9 @@ const SavingsCalculator = () => {
         'Complete wet performance testing',
       ],
     },
-  };
+  } as const;
+
+  type CompetitorType = keyof typeof competitorData;
 
   const gypcreteData = {
     current: { osb: 0.70, gypcrete: 2.875, total: 3.575, process: 'Multi-trade, wet installation' },
@@ -122,13 +126,13 @@ const SavingsCalculator = () => {
   };
   const handleProjectTypeSelect = (type: 'gypcrete' | 'subfloor') => {
     setProjectType(type);
-  
+
     // Reset dependent state when switching
     if (type === 'gypcrete') {
       setCompetitorType('structocrete'); // safe default, unused in gypcrete
     }
   };
-  
+
 
   const calculateSavings = () => {
     const size = Number(projectSize);
@@ -157,12 +161,12 @@ const SavingsCalculator = () => {
       };
     } else {
       const competitor = competitorData[competitorType];
-      
+
       if (!competitor) {
         console.error('Competitor not found:', competitorType);
         return null;
       }
-      
+
       const currentCost = competitor.competitorCost * size;
       const maxterraCost = competitor.maxterraCost * size;
       const savings = currentCost - maxterraCost;
@@ -178,7 +182,7 @@ const SavingsCalculator = () => {
         maxterraCostPerSF: competitor.maxterraCost,
         additionalBenefits: competitor.additionalBenefits,
         spacingNote: competitor.spacingNote,
-        constructionNote: competitor.constructionNote,
+        constructionNote: competitor.constructionNote, // This property is optional
       };
     }
   };
@@ -193,7 +197,7 @@ const SavingsCalculator = () => {
       alert('Please select Current Subfloor Product');
       return;
     }
-    
+
     if (projectType === 'subfloor' && !HUBSPOT_PRODUCT_MAP[competitorType]) {
       console.error('Invalid competitorType:', competitorType);
       alert('Invalid product selection. Please try again.');
@@ -241,10 +245,12 @@ const SavingsCalculator = () => {
         state,
         zipCode,
         company,
-        calculator_type: projectType === 'gypcrete' ? 'Gypsum Replacement' : 'Structural Floor Replacement',
-        square_footage: projectSize,
-        building_type: buildingType,
-        current_product: projectType === 'gypcrete'
+        calculatorType: projectType === 'gypcrete'
+          ? 'Gypsum Replacement'
+          : 'Structural Floor Replacement',
+        squareFootage: projectSize,
+        buildingType: buildingType,
+        currentProduct: projectType === 'gypcrete'
           ? 'Wet-Laid Gypsum'
           : HUBSPOT_PRODUCT_MAP[competitorType],
         calculatedSavings: results.savings,
@@ -417,7 +423,8 @@ const SavingsCalculator = () => {
                 <option value="">Select building type...</option>
                 <option value="Multi-Family Residential">Multi-Family Residential</option>
                 <option value="Hotel/Hospitality">Hotel/Hospitality</option>
-                <option value="Commerical">Commerical</option>
+            
+                <option value="Commercial">Commercial</option>
                 <option value="Industrial">Industrial</option>
                 <option value="Single-Family Residential">Single-Family Residential</option>
                 <option value="Data Center">Data Center</option>
@@ -430,14 +437,14 @@ const SavingsCalculator = () => {
                 <label className="block text-base font-semibold text-gray-700 mb-2 leading-[39px] tracking-[-0.01em]">Current Subfloor Product</label>
                 <select
                   value={competitorType}
-                  onChange={(e) => setCompetitorType(e.target.value)}
+                  onChange={(e) => setCompetitorType(e.target.value as CompetitorType)}
                   className="w-full px-4 py-3 border border-borderLightGray rounded-[7px] focus:border-orange-500 focus:outline-none text-lg leading-[39px] tracking-[-0.01em] text-center"
                 >
                   <option value="structocrete">Structo-Crete</option>
-<option value="exacor">Exacor</option>
-<option value="megaboard">Megaboard</option>
-<option value="dragonboard">Dragonboard</option>
-<option value="nocom">NOCOM</option>
+                  <option value="exacor">Exacor</option>
+                  <option value="megaboard">Megaboard</option>
+                  <option value="dragonboard">Dragonboard</option>
+                  <option value="nocom">NOCOM</option>
 
                 </select>
               </div>
@@ -508,7 +515,7 @@ const SavingsCalculator = () => {
               </h3>
               <div className="flex items-baseline mb-4">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2" style={{ marginBottom: '4px' }}>
-                  <path d="M16 6L18.29 8.29L13.41 13.17L9.41 9.17L2 16.59L3.41 18L9.41 12L13.41 16L19.71 9.71L22 12V6H16Z" fill="white"/>
+                  <path d="M16 6L18.29 8.29L13.41 13.17L9.41 9.17L2 16.59L3.41 18L9.41 12L13.41 16L19.71 9.71L22 12V6H16Z" fill="white" />
                 </svg>
                 <span className="font-manrope font-bold text-[32px] leading-9 text-white">
                   ${(results.currentCostPerSF - results.maxterraCostPerSF).toFixed(2)}
@@ -524,25 +531,25 @@ const SavingsCalculator = () => {
             <h2 className="font-manrope font-semibold text-2xl leading-8 tracking-[-0.01em] text-[#212121]">Cost Breakdown</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-4 mb-8 px-[25px]">
-  <div className="bg-costBreakdownCurrentBg rounded-xl border border-gray-200 p-6 flex flex-col h-full">
-    <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] -mb-1 min-h-[40px] flex items-center">
-      {results.type === 'gypcrete' ? 'Current System (OSB + Gypcrete)' : `Current System (${results.competitorName})`}
-    </h4>
-    <div className="">
-      <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-[#212121]">${results.currentCost.toLocaleString()}</div>
-      <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#25647D] mt-1">${results.currentCostPerSF.toFixed(2)}/sq ft</div>
-    </div>
-  </div>
-  <div className="bg-[#22C25533] rounded-lg p-6 flex flex-col h-full">
-    <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] -mb-1 min-h-[40px] flex items-center">
-      {results.type === 'gypcrete' ? 'MAXTERRA System (OSB + Underlayment)' : 'MAXTERRA Subfloor'}
-    </h4>
-    <div className="">
-      <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-green-600">${results.maxterraCost.toLocaleString()}</div>
-      <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#22C255] mt-1">${results.maxterraCostPerSF.toFixed(2)}/sq ft</div>
-    </div>
-  </div>
-</div>
+            <div className="bg-costBreakdownCurrentBg rounded-xl border border-gray-200 p-6 flex flex-col h-full">
+              <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] -mb-1 min-h-[40px] flex items-center">
+                {results.type === 'gypcrete' ? 'Current System (OSB + Gypcrete)' : `Current System (${results.competitorName})`}
+              </h4>
+              <div className="">
+                <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-[#212121]">${results.currentCost.toLocaleString()}</div>
+                <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#25647D] mt-1">${results.currentCostPerSF.toFixed(2)}/sq ft</div>
+              </div>
+            </div>
+            <div className="bg-[#22C25533] rounded-lg p-6 flex flex-col h-full">
+              <h4 className="font-manrope font-medium text-base leading-[18px] tracking-[-0.01em] text-[#212121] -mb-1 min-h-[40px] flex items-center">
+                {results.type === 'gypcrete' ? 'MAXTERRA System (OSB + Underlayment)' : 'MAXTERRA Subfloor'}
+              </h4>
+              <div className="">
+                <div className="font-manrope font-extrabold text-[28px] leading-8 tracking-[-0.01em] text-green-600">${results.maxterraCost.toLocaleString()}</div>
+                <div className="font-manrope font-medium text-sm leading-5 tracking-[0.01em] text-[#22C255] mt-1">${results.maxterraCostPerSF.toFixed(2)}/sq ft</div>
+              </div>
+            </div>
+          </div>
           <div className="mt-4 text-center">
             <p className="font-manrope text-sm text-gray-500 italic">
               Cost estimates based on average national pricing; material and labor costs vary by region.
@@ -557,7 +564,7 @@ const SavingsCalculator = () => {
                 {competitorData[competitorType]?.spacingNote && (
                   <p>• {competitorData[competitorType].spacingNote}</p>
                 )}
-                {competitorData[competitorType]?.constructionNote && (
+                {competitorType && competitorData[competitorType]?.constructionNote && (
                   <p>• {competitorData[competitorType].constructionNote}</p>
                 )}
                 <p>• For different framing or construction approaches, contact us for customized analysis</p>
