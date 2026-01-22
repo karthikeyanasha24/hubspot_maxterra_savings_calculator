@@ -19,12 +19,21 @@ const getHubSpotCookie = () => {
   return null;
 };
 
+// Mapping of internal competitor keys to HubSpot's expected values
+const HUBSPOT_PRODUCT_MAP: Record<string, string> = {
+  structocrete: 'Structo-Crete',
+  exacor: 'Exacor',
+  megaboard: 'Megaboard',
+  dragonboard: 'Dragonboard',
+  nocom: 'NOCOM',
+};
+
 const SavingsCalculator = () => {
   const [step, setStep] = useState(1);
   const [projectType, setProjectType] = useState('');
   const [buildingType, setBuildingType] = useState('');
   const [projectSize, setProjectSize] = useState<number | ''>('');
-  const [competitorType, setCompetitorType] = useState('');
+  const [competitorType, setCompetitorType] = useState('structocrete'); // Default to first option
   const [results, setResults] = useState<any>(null);
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -33,15 +42,15 @@ const SavingsCalculator = () => {
   const [showThankYou, setShowThankYou] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phone, setPhone] = useState('');
-  const [streetAddress, setStreetAddress] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [company, setCompany] = useState('');
+  const [streetAddress, setStreetAddress] = useState('');
 
-  const handleProjectTypeSelect = (type: string) => setProjectType(type);
 
-  const competitorData: any = {
+
+  const competitorData = {
     structocrete: {
       name: 'STRUCTO-CRETE',
       maxterraCost: 4.76,
@@ -111,6 +120,15 @@ const SavingsCalculator = () => {
     current: { osb: 0.70, gypcrete: 2.875, total: 3.575, process: 'Multi-trade, wet installation' },
     maxterra: { osb: 0.70, underlayment: 1.21, total: 1.91, process: 'Single trade, dry installation' },
   };
+  const handleProjectTypeSelect = (type: 'gypcrete' | 'subfloor') => {
+    setProjectType(type);
+  
+    // Reset dependent state when switching
+    if (type === 'gypcrete') {
+      setCompetitorType('structocrete'); // safe default, unused in gypcrete
+    }
+  };
+  
 
   const calculateSavings = () => {
     const size = Number(projectSize);
@@ -138,12 +156,10 @@ const SavingsCalculator = () => {
         ],
       };
     } else {
-      // Convert competitorType to lowercase and handle the hyphen in STRUCTO-CRETE
-      const competitorKey = competitorType.toLowerCase().replace(/-/g, '');
-      const competitor = competitorData[competitorKey];
+      const competitor = competitorData[competitorType];
       
       if (!competitor) {
-        console.error('Competitor not found:', competitorType, competitorKey);
+        console.error('Competitor not found:', competitorType);
         return null;
       }
       
@@ -175,6 +191,12 @@ const SavingsCalculator = () => {
 
     if (projectType === 'subfloor' && !competitorType) {
       alert('Please select Current Subfloor Product');
+      return;
+    }
+    
+    if (projectType === 'subfloor' && !HUBSPOT_PRODUCT_MAP[competitorType]) {
+      console.error('Invalid competitorType:', competitorType);
+      alert('Invalid product selection. Please try again.');
       return;
     }
 
@@ -219,17 +241,12 @@ const SavingsCalculator = () => {
         state,
         zipCode,
         company,
-        calculatorType: projectType === 'gypcrete'
-          ? 'Gypsum Replacement'
-          : 'Structural Floor Replacement',
-        squareFootage: projectSize,
-        buildingType: buildingType,
-        currentProduct: projectType === 'gypcrete'
+        calculator_type: projectType === 'gypcrete' ? 'Gypsum Replacement' : 'Structural Floor Replacement',
+        square_footage: projectSize,
+        building_type: buildingType,
+        current_product: projectType === 'gypcrete'
           ? 'Wet-Laid Gypsum'
-          : results.competitorName === 'Structo-Crete' ? 'STRUCTO-CRETE'
-          : results.competitorName === 'Exacor' ? 'EXACOR'
-          : results.competitorName === 'Megaboard' ? 'MEGABOARD'
-          : results.competitorName,
+          : HUBSPOT_PRODUCT_MAP[competitorType],
         calculatedSavings: results.savings,
         pageUri: window.location.href,
         pageName: document.title,
@@ -416,12 +433,12 @@ const SavingsCalculator = () => {
                   onChange={(e) => setCompetitorType(e.target.value)}
                   className="w-full px-4 py-3 border border-borderLightGray rounded-[7px] focus:border-orange-500 focus:outline-none text-lg leading-[39px] tracking-[-0.01em] text-center"
                 >
-                  <option value="">Select current product...</option>
-                  <option value="STRUCTO-CRETE">STRUCTO-CRETE</option>
-                  <option value="EXACOR">EXACOR</option>
-                  <option value="MEGABOARD">MEGABOARD</option>
-                  <option value="DragonBoard">DragonBoard</option>
-                  <option value="NOCOM">NOCOM</option>
+                  <option value="structocrete">Structo-Crete</option>
+<option value="exacor">Exacor</option>
+<option value="megaboard">Megaboard</option>
+<option value="dragonboard">Dragonboard</option>
+<option value="nocom">NOCOM</option>
+
                 </select>
               </div>
             )}
@@ -537,8 +554,12 @@ const SavingsCalculator = () => {
             <div className="bg-gray-50 rounded-xl p-6 mb-6">
               <h4 className="font-semibold text-gray-700 mb-3">Calculation Details</h4>
               <div className="text-gray-600 text-sm space-y-1">
-                <p>• {competitorData[competitorType]?.spacingNote}</p>
-                {competitorData[competitorType]?.constructionNote && <p>• {competitorData[competitorType].constructionNote}</p>}
+                {competitorData[competitorType]?.spacingNote && (
+                  <p>• {competitorData[competitorType].spacingNote}</p>
+                )}
+                {competitorData[competitorType]?.constructionNote && (
+                  <p>• {competitorData[competitorType].constructionNote}</p>
+                )}
                 <p>• For different framing or construction approaches, contact us for customized analysis</p>
               </div>
             </div>
