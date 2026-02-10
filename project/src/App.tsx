@@ -338,9 +338,10 @@ const SavingsCalculator = () => {
                   }`}
               />
               <h4 className="text-lg font-bold text-darkGray mb-4 leading-[39px] tracking-[-0.01em]">Wet Gypsum Underlayment</h4>
-              <p className="font-medium text-sm leading-[20px] tracking-normal text-darkGray mb-3">
-                Replace OSB + Wet Gypsum with <span className="font-bold text-darkGray">MAXTERRA® MgO Fire- And Water-Resistant Underlayment</span>
-              </p>
+            <p className="font-medium text-sm leading-[20px] tracking-normal text-darkGray mb-3">
+  Replace Wet Gypsum with <span className="font-bold text-darkGray">MAXTERRA® MgO Fire- And Water-Resistant Underlayment</span>
+</p>
+
             </button>
             <button
               onClick={() => handleProjectTypeSelect('subfloor')}
